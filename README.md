@@ -13,4 +13,6 @@ Add play and replay button
 Convert the motion parabolic from linear
 Increase speed as it goes up
 Rotate the bird when it descends and ascends
-Add high score display to the game
+Add high score display to the game   
+
+![Screnshot of the game](/images/screenshot.png)
