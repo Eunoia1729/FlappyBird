@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Flappy Bird
+		</title>
+	</head>
+	<body>
+		<canvas id = 'canvas' width="900" height="622"> </canvas>
+		<script>
+			let canvas = document.getElementById('canvas');
+			let context = canvas.getContext("2d");
+			let bg = new Image();
+			let bird = new Image();
+			let up_p = new Image();
+			let down_p = new Image();
+			let fg = new Image();
+			let gap = 125;
+			bg.src = "images/bg_2.png";
+			bird.src = "images/bird.png";
+			up_p.src = "images/pipeNorth.png";
+			down_p.src = "images/pipeSouth.png";
+			fg.src = "images/fg.png";
+
+			let fly_music = new Audio();
+			let score_music = new Audio();
+
+			fly_music.src = "sounds/fly.mp3";
+			score_music.src = "sounds/score.mp3";
+
+			let bx = 200;
+			let by = 256;
+			let score = 0;
+			var pipes = [];
+			pipes.push(
+				{
+					x : canvas.width - up_p.width,
+					y : Math.floor(Math.random()*up_p.height) - up_p.height
+				}
+			);
+			function moveUp()
+			{
+				by -= 40;
+				fly_music.play();
+			}
+			document.addEventListener("keydown", moveUp);
+			let i = 0, len_covered, cnt;
+			function draw()
+			{
+				context.drawImage(bg,0,0);
+				context.drawImage(bird, bx, by);
+				by += 1;
+				for(i = 0; i < pipes.length; ++i)
+				{
+					context.drawImage(up_p, pipes[i].x, pipes[i].y);
+					context.drawImage(down_p, pipes[i].x, pipes[i].y + up_p.height +gap);
+					pipes[i].x--;
+					if( pipes[i].x === 2*canvas.width/3 )
+					{
+						pipes.push(
+							{
+								x : canvas.width - up_p.width,
+								y : Math.floor(Math.random()*up_p.height) - up_p.height
+							}
+						);
+					}
+					//collision detection
+					if(
+						((bx <= pipes[i].x + up_p.width)
+							&&
+						 (bx + bird.width >= pipes[i].x) )
+						&&
+						((by + bird.height <= pipes[i].y + up_p.height)
+						     ||
+						(by >= pipes[i].y + up_p.height + gap))
+					  )
+					{
+						alert("You lost");
+						location.reload();
+					}
+					if( by <= 0 || by + bird.height >= canvas.height )
+					{
+						alert("You lost");
+						location.reload();
+					}
+					if( pipes[i].x == bx)
+					{
+						score++;
+						score_music.play();
+					}
+				}
+				len_covered = 0;
+				cnt = 0;
+				while(len_covered < canvas.width)
+				{
+					context.drawImage(fg, len_covered, canvas.height - fg.height);
+					len_covered += fg.width;
+					cnt += 1;
+					if( cnt > 10)
+						break;
+				}
+				context.fillStyle = "#000";
+    			context.font = "30px Verdana";
+    			context.fillText("Score : "+score,10,canvas.height-20);
+				requestAnimationFrame(draw);
+			}
+			draw();
+		</script>
+	</body>
+</html>
